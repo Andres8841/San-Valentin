@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>19 Meses ❤️</title>
+
+    <style>
+        body {
+            margin: 0;
+            background: linear-gradient(to top, #ffe6f0, #ffffff);
+            font-family: 'Segoe UI', sans-serif;
+            overflow: hidden;
+        }
+
+        /* Layout */
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            gap: 150px;
+
+        }
+
+        /* Árbol */
+        #tree-area {
+            position: relative;
+            width: 650px;
+            height: 750px;
+
+        }
+
+        /* SVG */
+        svg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Ramas y raíces */
+        .branch {
+            stroke: #1f7a4d;
+            stroke-width: 5;
+            fill: none;
+            stroke-linecap: round;
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+            animation: grow 4s forwards ease-in-out;
+        }
+
+        @keyframes grow {
+            to {
+                stroke-dashoffset: 0;
+            }
+        }
+
+        /* Corazones */
+        .heart {
+            position: absolute;
+            opacity: 0;
+            animation: fadeIn 2s forwards;
+
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+
+            }
+        }
+
+        /* Texto */
+        #message {
+            width: 480px;
+            font-size: 18px;
+            line-height: 1.7;
+            color: #7a2e45;
+        }
+
+        /* Contador */
+        #counter {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            text-align: center;
+            font-size: 22px;
+            color: #b03060;
+        }
+
+        #petals-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        /* Pétalos */
+        .petal {
+            position: absolute;
+            top: -50px;
+            font-size: 20px;
+            animation: fall linear infinite;
+            opacity: 0.8;
+        }
+
+        /* Animación caída */
+        @keyframes fall {
+            0% {
+                transform: translateY(-50px) translateX(0) rotate(0deg);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(110vh) translateX(80px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="petals-container"></div>
+
+    <div class="container">
+
+        <div id="tree-area">
+
+            <svg>
+
+                <!-- Tronco -->
+                <path class="branch" d="M325 720 Q325 580 325 500" />
+
+                <!-- Raíces principales -->
+                <path class="branch" style="animation-delay:0.5s" d="M325 720 Q280 760 240 740" />
+                <path class="branch" style="animation-delay:0.5s" d="M325 720 Q370 760 410 740" />
+                <path class="branch" style="animation-delay:0.5s" d="M325 720 Q310 770 290 750" />
+                <path class="branch" style="animation-delay:0.5s" d="M325 720 Q340 770 360 750" />
+
+                <!-- Ramas principales -->
+                <path class="branch" style="animation-delay:1s" d="M325 500 Q200 380 150 280" />
+                <path class="branch" style="animation-delay:1s" d="M325 500 Q450 380 500 280" />
+                <path class="branch" style="animation-delay:1s" d="M325 500 Q260 350 240 250" />
+                <path class="branch" style="animation-delay:1s" d="M325 500 Q390 350 410 250" />
+                <path class="branch" style="animation-delay:1s" d="M325 500 Q325 330 325 200" />
+
+            </svg>
+
+        </div>
+
+        <div id="message"></div>
+
+    </div>
+
+    <div id="counter"></div>
+
+    <script>
+
+        const tree = document.getElementById("tree-area");
+        const centerX = 320;
+        const centerY = 300;
+
+        /* ❤️ FUNCIÓN CORAZÓN CORRECTA (NO INVERTIDO) */
+        function insideHeart(x, y) {
+            let nx = (x - centerX) / 200;
+            let ny = -(y - centerY) / 200;
+            return Math.pow(nx * nx + ny * ny - 1, 3) - nx * nx * ny * ny * ny <= 0;
+        }
+
+        /* Crear corazón relleno aesthetic */
+        setTimeout(() => {
+
+            const colors = ["#ff4d6d", "#ff758f", "#ff8fa3", "#f72585", "#ffb3c1", "#ff3366"];
+
+            for (let i = 0; i < 2200; i++) {
+
+                let x, y;
+                do {
+                    x = Math.random() * 650;
+                    y = Math.random() * 520;
+                } while (!insideHeart(x, y));
+
+                let heart = document.createElement("div");
+                heart.className = "heart";
+                heart.innerHTML = "❤";
+
+                heart.style.left = x + "px";
+                heart.style.top = y + "px";
+                heart.style.fontSize = (8 + Math.random() * 14) + "px";
+                heart.style.color = colors[Math.floor(Math.random() * colors.length)];
+                heart.style.animationDelay = (Math.random() * 3) + "s";
+
+                tree.appendChild(heart);
+            }
+
+        }, 4000);
+
+
+        /* ⏳ CONTADOR */
+        const counter = document.getElementById("counter");
+        const startDate = new Date();
+        startDate.setMonth(startDate.getMonth() - 19);
+
+        function updateCounter() {
+            const now = new Date();
+            const diff = now - startDate;
+
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+            const minutes = Math.floor((diff / (1000 * 60)) % 60);
+            const seconds = Math.floor((diff / 1000) % 60);
+
+            counter.innerHTML =
+                `Mi amor por ti comenzó hace 19 meses 💞<br>
+    ${days} días ${hours} horas ${minutes} minutos ${seconds} segundos`;
+        }
+        setInterval(updateCounter, 1000);
+
+
+        /* ✍️ TEXTO PALABRA POR PALABRA */
+        const text = `Mi amor,
+
+Hoy celebramos 19 meses juntos, 19 meses de risas, aprendizajes, abrazos que curan todo y momentos que se han convertido en los recuerdos más valiosos de mi vida. No sabes lo agradecido que estoy con Dios y con la vida por haberte puesto en mi camino.
+
+Te amo con todo mi corazón. Te amo en los días buenos, en los días difíciles, en los momentos de locura y en los momentos de calma. Eres mi apoyo, mi paz, mi alegría y mi motivación para ser mejor cada día. Desde que estás conmigo, todo tiene más sentido.
+
+Quiero que sigamos caminando juntos, de la mano, en lo bueno y en lo malo. Que cuando lleguen tormentas, nos abracemos más fuerte; y cuando lleguen bendiciones, las celebremos juntos. Eres mi compañera, mi hogar y mi lugar favorito en el mundo.
+
+Gracias por amarme, por creer en mí y por estar a mi lado. Eres todo para mí, y cada día que pasa estoy más seguro de que quiero seguir construyendo nuestra historia contigo.
+
+Felices 19 meses, mi vida. ❤️`;
+
+        const message = document.getElementById("message");
+        const words = text.split(" ");
+        let i = 0;
+
+        function typeWord() {
+            if (i < words.length) {
+                message.innerHTML += words[i] + " ";
+                i++;
+                setTimeout(typeWord, 85);
+            }
+        }
+
+        setTimeout(typeWord, 5000);
+
+        /* 🌸 PETALOS CAYENDO */
+
+        const petalsContainer = document.getElementById("petals-container");
+
+        function createPetal() {
+
+            const petal = document.createElement("div");
+            petal.className = "petal";
+            const petals = ["🌸", "💗", "💖", "🌺"];
+            petal.innerHTML = petals[Math.floor(Math.random() * petals.length)];
+
+            petal.style.left = Math.random() * 100 + "vw";
+            petal.style.animationDuration = (5 + Math.random() * 5) + "s";
+            petal.style.fontSize = (15 + Math.random() * 15) + "px";
+            petal.style.opacity = Math.random();
+
+            petalsContainer.appendChild(petal);
+
+            setTimeout(() => {
+                petal.remove();
+            }, 10000);
+        }
+
+        setInterval(createPetal, 300);
+
+
+    </script>
+
+</body>
+
+</html>
