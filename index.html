@@ -11,7 +11,55 @@
             background: linear-gradient(to top, #ffe6f0, #ffffff);
             font-family: 'Segoe UI', sans-serif;
             overflow: hidden;
+
         }
+
+        /* ❤️ Corazón inicial */
+        #start-heart {
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 80px;
+            cursor: pointer;
+            z-index: 20;
+            transition: 0.3s;
+        }
+
+        #start-heart:hover {
+            transform: translate(-50%, -50%) scale(1.2);
+        }
+
+        /* Caída */
+        .drop {
+            animation: dropHeart 1s forwards ease-in;
+        }
+
+        @keyframes dropHeart {
+            to {
+                transform: translate(-50%, 350px);
+                opacity: 0.7;
+            }
+        }
+
+        /* 🔒 Ocultar árbol COMPLETO */
+        #tree-area {
+            opacity: 0;
+        }
+
+        /* 🚫 Quitar animación automática */
+        .branch {
+            animation: none !important;
+        }
+
+
+        /* Ocultar árbol al inicio */
+        #tree-area {
+            opacity: 0;
+            transition: opacity 0.8s ease;
+        }
+
+
 
         /* Layout */
         .container {
@@ -21,6 +69,11 @@
             height: 100vh;
             gap: 150px;
 
+        }
+
+        .branch {
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
         }
 
         /* Árbol */
@@ -55,6 +108,12 @@
             }
         }
 
+        @keyframes growTree {
+            to {
+                stroke-dashoffset: 0;
+            }
+        }
+
         /* Corazones */
         .heart {
             position: absolute;
@@ -81,7 +140,7 @@
         /* Contador */
         #counter {
             position: absolute;
-            bottom: 20px;
+            top: 740px;
             width: 100%;
             text-align: center;
             font-size: 22px;
@@ -128,6 +187,7 @@
 </head>
 
 <body>
+    <div id="start-heart">❤️</div>
     <div id="petals-container"></div>
 
     <div class="container">
@@ -151,6 +211,8 @@
                 <path class="branch" style="animation-delay:1s" d="M325 500 Q260 350 240 250" />
                 <path class="branch" style="animation-delay:1s" d="M325 500 Q390 350 410 250" />
                 <path class="branch" style="animation-delay:1s" d="M325 500 Q325 330 325 200" />
+                <!-- Suelo -->
+
 
             </svg>
 
@@ -206,23 +268,48 @@
 
         /* ⏳ CONTADOR */
         const counter = document.getElementById("counter");
-        const startDate = new Date();
-        startDate.setMonth(startDate.getMonth() - 19);
+
+        /* ❤️ PON AQUÍ SU FECHA REAL */
+        const startDate = new Date("2024-06-22T09:36:30");
 
         function updateCounter() {
-            const now = new Date();
-            const diff = now - startDate;
 
-            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const now = new Date();
+
+            let years = now.getFullYear() - startDate.getFullYear();
+            let months = now.getMonth() - startDate.getMonth();
+            let days = now.getDate() - startDate.getDate();
+
+            if (days < 0) {
+                months--;
+                const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+                days += prevMonth.getDate();
+            }
+
+            if (months < 0) {
+                years--;
+                months += 12;
+            }
+
+            const diff = now - startDate;
             const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
             const minutes = Math.floor((diff / (1000 * 60)) % 60);
             const seconds = Math.floor((diff / 1000) % 60);
 
-            counter.innerHTML =
-                `Mi amor por ti comenzó hace 19 meses 💞<br>
-    ${days} días ${hours} horas ${minutes} minutos ${seconds} segundos`;
+            counter.innerHTML = `
+        ❤️ Llevamos juntos ❤️ <br><br>
+        ${years} años 
+        ${months} meses 
+        ${days} días <br>
+        ${hours} horas 
+        ${minutes} minutos 
+        ${seconds} segundos
+    `;
         }
+
         setInterval(updateCounter, 1000);
+        updateCounter();
+
 
 
         /* ✍️ TEXTO PALABRA POR PALABRA */
@@ -276,6 +363,29 @@ Felices 19 meses, mi vida. ❤️`;
         }
 
         setInterval(createPetal, 300);
+        const startHeart = document.getElementById("start-heart");
+        const treeArea = document.getElementById("tree-area");
+
+        startHeart.addEventListener("click", () => {
+
+            startHeart.classList.add("drop");
+
+            setTimeout(() => {
+
+                startHeart.style.display = "none";
+                treeArea.style.opacity = "1";
+
+                const branches = document.querySelectorAll(".branch");
+
+                branches.forEach((branch, index) => {
+                    branch.style.animation =
+                        `growTree 3s forwards ease-in-out`;
+                    branch.style.animationDelay = (index * 0.3) + "s";
+                });
+
+            }, 1000);
+        });
+
 
 
     </script>
